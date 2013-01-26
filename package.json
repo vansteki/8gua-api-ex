@@ -1,0 +1,12 @@
+{
+  "name": "8gua-api-ex",
+  "version": "0.1.0",
+  "description": "This is a restful API for crawer 8gua/GC",
+  "author": "vansteki <vansteki.tw@gmail.com.com>",
+  "dependencies": {
+    "express": ">= 3.1.0",
+    "joi": ">= 0.0.x",
+    "mongodb": ">= 1.2.10"
+  },
+  "engine": "node 0.8.x"
+}
