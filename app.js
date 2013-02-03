@@ -3,28 +3,37 @@ var express = require('express'),
 app = express(),
 port = 977;
 var Joi = require('joi');
-var MongoClient = require('mongodb').MongoClient;
+var mysql = require('mysql');
 enableCache = 'no'
-
 app.listen(port);
+
+var mysql_ini = function(){
+    var connection = mysql.createConnection({
+      host     : 'localhost',
+      user     : '',
+      password : '',
+    });
+    return connection
+}
 
 var db_fetchData = function(y,m,d, res){
     var createDay = y + '-' + m + '-' + d;
     var createDay2 = m + '/' + d;
-    var maxAge = 86400/2
-
-    console.log(createDay2);
-    MongoClient.connect("mongodb://[ID]:[PASS]@linus.mongohq.com:10054/[DB]", function(err, db) {
-        if(err) { return console.dir(err); }
-        else
-            db.collection('[COLL]', function(err, collection) { 
-            // db.XD.find({date:'1/23',pushCount:'6'},{date:1,author:1,pushCount:1}).limit(10)
-                 collection.find({date:createDay}).sort({_id : -1}).limit(100).toArray(function(err, items) {
-                    if(enableCache == 'yes')
-                        if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max-age=' + maxAge );
-                    res.send(items);
-                 });
-            });
+    var maxAge = 86400/6
+    console.log(createDay);
+    
+    var con = mysql_ini();
+    var items = [];
+    con.connect();
+    con.query('use ptt_demo');
+    con.query("SELECT id,author,title,date,head,full_article from gm WHERE date = '" + createDay + "'", function(err, rows, fields) {
+        if (err) throw err;
+        for (var i in rows) {
+            items.push(rows[i]);
+            console.log('> ', rows[i].author + ' '+ rows[i].title );
+        }
+        console.log('count: ' + items.length);
+        res.send(JSON.stringify(items));
     });
 }
 
