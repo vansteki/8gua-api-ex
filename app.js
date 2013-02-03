@@ -33,6 +33,8 @@ var db_fetchData = function(y,m,d, res){
             console.log('> ', rows[i].author + ' '+ rows[i].title );
         }
         console.log('count: ' + items.length);
+        if(enableCache == 'yes')
+            if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max-age=' + maxAge );
         res.send(JSON.stringify(items));
     });
 }
