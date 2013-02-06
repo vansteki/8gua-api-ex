@@ -50,7 +50,8 @@ var db_fetchData = function(y,m,d, res, msgObj){
 
         msgObj.count = items.length;
         console.log(msgObj);
-    }); 
+    });
+    con.end();
 }
 
 var validation = function(obj, mode){
