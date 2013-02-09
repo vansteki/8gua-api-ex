@@ -6,7 +6,7 @@
   "dependencies": {
     "express": ">= 3.1.0",
     "joi": ">= 0.0.x",
-    "mysql": ">=2.0.0",
+    "mysql": "git://github.com/felixge/node-mysql.git",
     "mongodb": ">= 1.2.10"
   },
   "engine": "node 0.8.x"
