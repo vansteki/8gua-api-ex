@@ -32,7 +32,7 @@ var db_fetchData = function(y,m,d, res, msgObj){
     var con = mysql_ini();
     var items = [];
     var createDay = y + '-' + m + '-' + d;
-    var createDay2 = m + '/' + d;
+    //var createDay2 = m + '/' + d;
     var maxAge = 86400/6
 
     con.connect();
