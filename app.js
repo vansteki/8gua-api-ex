@@ -29,11 +29,11 @@ var mysql_ini = function(){
 }
 
 var db_fetchData = function(y,m,d, res, msgObj){
+    var con = mysql_ini();
+    var items = [];
     var createDay = y + '-' + m + '-' + d;
     var createDay2 = m + '/' + d;
     var maxAge = 86400/6
-    var con = mysql_ini();
-    var items = [];
 
     con.connect();
     con.query('use ptt_demo');
@@ -50,7 +50,33 @@ var db_fetchData = function(y,m,d, res, msgObj){
 
         msgObj.count = items.length;
         console.log(msgObj);
-    }); 
+    });
+    con.end();
+}
+
+var db_fetchRiotData = function(res, msgObj){
+    var con = mysql_ini();
+    var items = [];
+    var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/\s+.*/,'')
+    var maxAge = 86400/6
+    
+    con.connect();
+    con.query('use ptt_demo');
+    con.query("SELECT * FROM notifier WHERE createTime like '" + date + "%'", function(err, rows, fields){
+        if (err) throw err;
+        for (var i in rows) {
+            items.push(rows[i]);
+            console.log('> ', rows[i].author +' '+ rows[i].title +' '+ rows[i].push);   
+        }
+
+        if(enableCache == 'yes')
+            if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max-age=' + maxAge );
+        res.send(JSON.stringify(items));
+
+        msgObj.count = items.length;
+        console.log(msgObj);
+    })
+    con.end();
 }
 
 var validation = function(obj, mode){
@@ -118,6 +144,12 @@ var validation = function(obj, mode){
             res.send({"page": ':3' });
         }
         console.log(msgObj);
+    });
+
+    app.get('/rioter/info', function(req, res){
+        var input = req.params;
+        var msgObj = { "input": input };
+        db_fetchRiotData(res, msgObj)
     });
 
     app.get('*', function(req, res){
